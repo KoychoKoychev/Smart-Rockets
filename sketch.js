@@ -1,7 +1,13 @@
 let population;
-const lifespan = 200;
+const lifespan = 400;
 let count = 0;
-let target;
+let target; 
+const maxForce = 0.3;
+
+const rx = 100;
+const ry = 200;
+const rw = 200;
+const rh = 10;
 
 // TODO Add an obsticle for the rockets to go around!
 
@@ -22,6 +28,9 @@ function draw() {
     count = 0;
   }
 
+  fill(255)
+  rect(100, 200, 200, 10)
+
   ellipse(target.x, target.y, 18, 18)
 }
 
@@ -31,6 +40,7 @@ class Rocket {
     this.velocity = createVector();
     this.accelation = createVector();
     this.completed = false;
+    this.crashed = false;
     if (dna) {
       this.DNA = dna
     } else {
@@ -49,6 +59,9 @@ class Rocket {
     if (this.completed) {
       this.fitness *= 10;
     }
+    if (this.crashed) {
+      this.fitness /= 10;
+    }
   }
 
   // apply the velocity and acceleration to the position of the element
@@ -59,8 +72,20 @@ class Rocket {
       this.completed = true;
       this.position = target.copy();
     }
+
+    if(this.position.x > rx && this.position.x < rx + rw && this.position.y > ry && this.position.y < ry + rh) {
+      this.crashed = true;
+    }
+
+    if (this.position.x > width || this.position.x < 0) {
+      this.crashed = true;
+    }
+    if (this.position.y > height || this.position.y < 0) {
+      this.crashed = true;
+    }
+
     this.applyForce(this.DNA.genes[count])
-    if (!this.completed){
+    if (!this.completed && !this.crashed) {
       this.velocity.add(this.accelation);
       this.position.add(this.velocity);
       this.accelation.mult(0);
@@ -146,7 +171,7 @@ class DNA {
       this.genes = []
       for (let i = 0; i < lifespan; i++) {
         this.genes[i] = p5.Vector.random2D();
-        this.genes[i].setMag(0.2)
+        this.genes[i].setMag(maxForce)
       }
     }
   }
@@ -168,7 +193,7 @@ class DNA {
     for (let i = 0; i < this.genes.length; i++) {
       if (Math.random() < 0.01) {
         this.genes[i] = p5.Vector.random2D();
-        this.genes[i].setMag(0.2)
+        this.genes[i].setMag(maxForce)
       }
     }
   }
