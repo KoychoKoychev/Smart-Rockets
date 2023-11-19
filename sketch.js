@@ -57,15 +57,15 @@ class Rocket {
 	}
 
 	calculateFitness() {
-		this.fitness = map(this.distanceToTarget, 0, width, width, 0) * 2;
+		this.fitness = map(this.distanceToTarget, 0, width, width, 0) * 20;
 		if (this.completed) {
 			this.fitness *= 10;
-			this.fitness /= (this.timeLived / lifespan )
+			this.fitness /= (this.timeLived / lifespan)
 
 		}
 		if (this.crashed) {
 			this.fitness /= 3;
-			this.fitness *= ( this.timeLived / lifespan )
+			this.fitness *= (this.timeLived / lifespan)
 		}
 	}
 
